@@ -1,0 +1,57 @@
+{
+  "name": "employee-management",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Employee Management System",
+  "main": "main.js",
+  "module": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "wds --watch",
+    "build": "rollup -c",
+    "lint": "npm run lint:lit-analyzer && npm run lint:eslint",
+    "lint:eslint": "eslint '**/*.js'",
+    "lint:lit-analyzer": "lit-analyzer my-element.js",
+    "format": "prettier \"**/*.{cjs,html,js,json,md,ts}\" --ignore-path ./.eslintignore --write",
+    "serve": "wds --watch",
+    "serve:prod": "MODE=prod npm run serve",
+    "test": "npm run test:dev && npm run test:prod",
+    "test:dev": "wtr",
+    "test:watch": "wtr --watch",
+    "test:prod": "MODE=prod wtr",
+    "test:prod:watch": "MODE=prod wtr --watch"
+  },
+  "keywords": [
+    "web-components",
+    "lit-element",
+    "javascript",
+    "lit"
+  ],
+  "author": "Sinan Ulusan",
+  "dependencies": {
+    "@vaadin/router": "^2.0.0",
+    "lit": "^3.2.0"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^1.0.1",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^4.0.0",
+    "@babel/eslint-parser": "^7.17.0",
+    "@custom-elements-manifest/analyzer": "^0.6.3",
+    "@open-wc/testing": "^4.0.0",
+    "@rollup/plugin-node-resolve": "^15.3.1",
+    "@rollup/plugin-replace": "^5.0.7",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@web/dev-server": "^0.1.31",
+    "@web/dev-server-legacy": "^1.0.0",
+    "@web/test-runner": "^0.15.0",
+    "@web/test-runner-playwright": "^0.9.0",
+    "@webcomponents/webcomponentsjs": "^2.8.0",
+    "eslint": "^8.15.0",
+    "lit-analyzer": "^1.2.1",
+    "prettier": "^2.6.2",
+    "rimraf": "^3.0.2",
+    "rollup": "^4.18.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-summary": "^2.0.1"
+  }
+}
