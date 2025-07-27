@@ -3,13 +3,15 @@ import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import copy from 'rollup-plugin-copy';
 import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: 'main.js',
+  input: 'src/main.ts',
   output: {
     dir: 'dist',
     format: 'esm',
-    entryFileNames: 'main.js'
+    entryFileNames: 'main.js',
+    sourcemap: true
   },
   onwarn(warning) {
     if (warning.code !== 'THIS_IS_UNDEFINED') {
@@ -17,7 +19,8 @@ export default {
     }
   },
   plugins: [
-    replace({preventAssignment: false, 'Reflect.decorate': 'undefined'}),
+    replace({ preventAssignment: false, 'Reflect.decorate': 'undefined' }),
+    typescript(),
     resolve(),
     terser({
       ecma: 2021,
@@ -33,15 +36,15 @@ export default {
     copy({
       targets: [
         { src: 'index.html', dest: 'dist' },
-        { src: 'assets', dest: 'dist' },
-        { src: 'components', dest: 'dist' },
-        { src: 'contants', dest: 'dist' },
-        { src: 'locales', dest: 'dist' },
-        { src: 'router.js', dest: 'dist' },
-        { src: 'store', dest: 'dist' },
-        { src: 'styles', dest: 'dist' },
-        { src: 'utils', dest: 'dist' },
-        { src: 'views', dest: 'dist' }
+        { src: 'src/assets', dest: 'dist' },
+        { src: 'src/components', dest: 'dist' },
+        { src: 'src/contants', dest: 'dist' },
+        { src: 'src/locales', dest: 'dist' },
+        { src: 'src/router', dest: 'dist' },
+        { src: 'src/stores', dest: 'dist' },
+        { src: 'src/styles', dest: 'dist' },
+        { src: 'src/utils', dest: 'dist' },
+        { src: 'src/app', dest: 'dist' }
       ]
     })
   ],

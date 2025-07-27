@@ -1,7 +1,8 @@
 import { LitElement, html, css } from 'lit';
 import { translate } from '../utils/i18n.js';
-import { deleteEmployee, getEmployees } from '../store/employeeStore.js';
+import { deleteEmployee, getEmployees } from '../stores/employeeStore.js';
 import { EMPLOYEE_VIEW_TYPE } from '../contants/employee.js';
+import { getPromptDescription } from '../utils/template.js';
 import './action-prompt.js';
 
 export class PeopleDirectory extends LitElement {
@@ -475,7 +476,7 @@ export class PeopleDirectory extends LitElement {
   renderEmptyState() {
     return html`
       <div class="empty-state">
-        <img src="/assets/icons/empty-state.svg" alt="No data" class="empty-state-icon" />
+        <img src="/src/assets/icons/empty-state.svg" alt="No data" class="empty-state-icon" />
         <h3 class="empty-state-title">${translate('noEmployeesFound')}</h3>
       </div>
     `;
@@ -542,14 +543,14 @@ export class PeopleDirectory extends LitElement {
                       @click=${() => this.emitEdit(emp)}
                       title="Edit"
                     >
-                      <img src="/assets/icons/edit.svg" alt="Edit" width="24" height="24" />
+                      <img src="/src/assets/icons/edit.svg" alt="Edit" width="24" height="24" />
                     </button>
                     <button
                       class="icon-btn"
                       @click=${() => this._onDeleteClick(emp)}
                       title="Delete"
                     >
-                      <img src="/assets/icons/trash.svg" alt="Delete" width="24" height="24" />
+                      <img src="/src/assets/icons/trash.svg" alt="Delete" width="24" height="24" />
                     </button>
                   </td>
                 </tr>
@@ -577,7 +578,7 @@ export class PeopleDirectory extends LitElement {
                   @click=${() => this.emitEdit(emp)}
                   title="Edit"
                 >
-                   <img src="/assets/icons/edit.svg" alt="Edit" width="16" height="16" />
+                   <img src="/src/assets/icons/edit.svg" alt="Edit" width="16" height="16" />
                    ${translate('edit')}
                 </button>
                 <button
@@ -585,7 +586,7 @@ export class PeopleDirectory extends LitElement {
                   @click=${() => this._onDeleteClick(emp)}
                   title="Delete"
                 >
-                  <img src="/assets/icons/trash.svg" alt="Delete" width="16" height="16" />
+                  <img src="/src/assets/icons/trash.svg" alt="Delete" width="16" height="16" />
                   ${translate('delete')}
                 </button>
               </div>
@@ -678,6 +679,13 @@ export class PeopleDirectory extends LitElement {
     `;
   }
 
+  get deleteConfirmDescription() {
+    return getPromptDescription('deleteConfirmDesc', {
+      firstName: this.employeeToDelete?.firstName || '',
+      lastName: this.employeeToDelete?.lastName || ''
+    }, translate);
+  }
+
   render() {
     return html`
       <div class="top-bar">
@@ -698,9 +706,7 @@ export class PeopleDirectory extends LitElement {
       <action-prompt
         .open=${this.showDeleteConfirm}
         .title=${translate('deleteConfirmTitle')}
-        .description=${translate('deleteConfirmDesc')
-        .replace('{firstName}', this.employeeToDelete?.firstName || '')
-        .replace('{lastName}', this.employeeToDelete?.lastName || '')}
+        .description=${this.deleteConfirmDescription}
         @proceed=${this._handleDeleteProceed}
         @cancel=${this._handleDeleteCancel}
       ></action-prompt>

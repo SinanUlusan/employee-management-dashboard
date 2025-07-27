@@ -1,0 +1,6 @@
+node_modules/
+dist/
+dist-ts/
+*.min.js
+coverage/
+test-results/ 

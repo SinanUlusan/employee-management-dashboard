@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { translate, switchLanguage } from '../utils/i18n.js';
-import { Router } from '@vaadin/router';
+import { isCurrentRoute } from '../utils/router.js';
 
 export class TopNavigation extends LitElement {
   static styles = css`
@@ -203,30 +203,12 @@ export class TopNavigation extends LitElement {
 
   constructor() {
     super();
-    this._router = Router;
-    this._currentPath = window.location.pathname;
     this._currentLang = localStorage.getItem('lang') || 'tr';
     this._isMenuOpen = false;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    window.addEventListener('vaadin-router-location-changed', (e) => {
-      this._currentPath = e.detail.location.pathname;
-      this.requestUpdate();
-    });
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    window.removeEventListener(
-      'vaadin-router-location-changed',
-      this._onLocationChanged
-    );
-  }
-
   _isActive(path) {
-    return this._currentPath === path;
+    return isCurrentRoute(path);
   }
 
   async _toggleLanguage() {
@@ -250,7 +232,7 @@ export class TopNavigation extends LitElement {
     return html`
       <nav>
         <a href="/" class="logo-wrapper">
-          <img src="/assets/images/logo.png" alt="ING" width="40" height="40" />
+          <img src="/src/assets/images/logo.png" alt="ING" width="40" height="40" />
           <span>ING</span>
         </a>
         <div
@@ -296,7 +278,7 @@ export class TopNavigation extends LitElement {
             @click=${this._closeMenu}
           >
             <img
-              src="/assets/icons/employee.svg"
+              src="/src/assets/icons/employee.svg"
               alt="employee"
               width="20"
               height="20"
@@ -309,7 +291,7 @@ export class TopNavigation extends LitElement {
             @click=${this._closeMenu}
           >
             <img
-              src="/assets/icons/add.svg"
+              src="/src/assets/icons/add.svg"
               alt="add"
               width="20"
               height="20"
@@ -317,7 +299,7 @@ export class TopNavigation extends LitElement {
           </a>
           <div class="language-switcher" @click=${this._toggleLanguage}>
             <img
-              src="/assets/icons/${this._currentLang === 'tr'
+              src="/src/assets/icons/${this._currentLang === 'tr'
         ? 'us'
         : 'tr'}.svg"
               alt="${this._currentLang}"

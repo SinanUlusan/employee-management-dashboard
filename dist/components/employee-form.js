@@ -1,6 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { translate } from '../utils/i18n.js';
-import { getEmployees, addEmployee, updateEmployee } from '../store/employeeStore.js';
+import { addEmployee, updateEmployee } from '../stores/employeeStore.js';
+import { navigateToHome, goBack } from '../utils/router.js';
+import { validateEmployee, validateField } from '../utils/validation.js';
+import { getPromptDescription } from '../utils/template.js';
 import './action-prompt.js';
 
 export class PersonEditor extends LitElement {
@@ -195,7 +198,17 @@ export class PersonEditor extends LitElement {
   handleInput(e) {
     const { name, value } = e.target;
     this.form = { ...this.form, [name]: value };
-    this.errors = { ...this.errors, [name]: '' };
+
+    // Real-time validation
+    const error = validateField(name, value, this.form);
+    if (error) {
+      this.errors = { ...this.errors, [name]: error };
+    } else {
+      const newErrors = { ...this.errors };
+      delete newErrors[name];
+      this.errors = newErrors;
+    }
+
     this._checkForChanges();
   }
 
@@ -231,65 +244,8 @@ export class PersonEditor extends LitElement {
   }
 
   validate() {
-    const errors = {};
-
-    // First name validation - only letters and spaces
-    if (!this.form.firstName) {
-      errors.firstName = translate('required');
-    } else if (!/^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]+$/.test(this.form.firstName)) {
-      errors.firstName = translate('onlyLetters');
-    }
-
-    // Last name validation - only letters and spaces
-    if (!this.form.lastName) {
-      errors.lastName = translate('required');
-    } else if (!/^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]+$/.test(this.form.lastName)) {
-      errors.lastName = translate('onlyLetters');
-    }
-
-    // Email validation - improved regex
-    if (!this.form.email) {
-      errors.email = translate('required');
-    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(this.form.email)) {
-      errors.email = translate('invalidEmail');
-    }
-
-    // Phone validation - only numbers
-    if (!this.form.phone) {
-      errors.phone = translate('required');
-    } else if (!/^[0-9+\-\s()]+$/.test(this.form.phone)) {
-      errors.phone = translate('onlyNumbers');
-    } else if (this.form.phone.replace(/[^0-9]/g, '').length < 10) {
-      errors.phone = translate('invalidPhone');
-    }
-
-    if (!this.form.department) errors.department = translate('required');
-    if (!this.form.position) errors.position = translate('required');
-    if (!this.form.employmentDate) errors.employmentDate = translate('required');
-    if (!this.form.birthDate) errors.birthDate = translate('required');
-
-    if (this.form.birthDate) {
-      const birth = new Date(this.form.birthDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (birth > today) {
-        errors.birthDate = translate('invalidBirthDate');
-      }
-    }
-
-    if (this.form.birthDate && this.form.employmentDate) {
-      const birth = new Date(this.form.birthDate);
-      const employment = new Date(this.form.employmentDate);
-      if (employment <= birth) {
-        errors.employmentDate = translate('employmentAfterBirth');
-      }
-    }
-
-    const employees = getEmployees();
-    if (employees.some(e => e.email === this.form.email && (!this.form.id || String(e.id) !== String(this.form.id)))) {
-      errors.email = translate('uniqueEmail');
-    }
-    return errors;
+    const result = validateEmployee(this.form);
+    return result.errors;
   }
 
   handleSubmit(e) {
@@ -303,8 +259,7 @@ export class PersonEditor extends LitElement {
       this.showToast = true;
       setTimeout(() => {
         this.showToast = false;
-        window.history.pushState({}, '', '/');
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        navigateToHome();
       }, 2000);
     }
   }
@@ -312,8 +267,7 @@ export class PersonEditor extends LitElement {
   _handleConfirmProceed() {
     updateEmployee(this.form);
     this.showConfirm = false;
-    window.history.pushState({}, '', '/');
-    window.dispatchEvent(new PopStateEvent('popstate'));
+    navigateToHome();
   }
 
   _handleConfirmCancel() {
@@ -321,7 +275,14 @@ export class PersonEditor extends LitElement {
   }
 
   handleCancel() {
-    window.history.back();
+    goBack();
+  }
+
+  get editConfirmDescription() {
+    return getPromptDescription('editConfirmDesc', {
+      firstName: this.form.firstName,
+      lastName: this.form.lastName
+    }, translate);
   }
 
   render() {
@@ -416,10 +377,10 @@ export class PersonEditor extends LitElement {
             >${translate('save')}</button>
           </div>
         </form>
-        <action-prompt
+                <action-prompt
           .open=${this.showConfirm}
           .title=${translate('editEmployee')}
-          .description=${translate('editConfirmDesc').replace('{firstName}', this.form.firstName).replace('{lastName}', this.form.lastName)}
+          .description=${this.editConfirmDescription}
           @proceed=${this._handleConfirmProceed}
           @cancel=${this._handleConfirmCancel}
         ></action-prompt>

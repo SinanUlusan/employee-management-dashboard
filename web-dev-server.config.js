@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import {legacyPlugin} from '@web/dev-server-legacy';
+import { legacyPlugin } from '@web/dev-server-legacy';
+import { esbuildPlugin } from '@web/dev-server-esbuild';
 
 const mode = process.env.MODE || 'dev';
 if (!['dev', 'prod'].includes(mode)) {
@@ -12,9 +13,15 @@ if (!['dev', 'prod'].includes(mode)) {
 }
 
 export default {
-  nodeResolve: {exportConditions: mode === 'dev' ? ['development'] : []},
+  nodeResolve: { exportConditions: mode === 'dev' ? ['development'] : [] },
   preserveSymlinks: true,
   plugins: [
+    esbuildPlugin({
+      ts: true,
+      jsx: true,
+      jsxImportSource: 'lit-html',
+      target: 'es2020'
+    }),
     legacyPlugin({
       polyfills: {
         webcomponents: false,
@@ -23,5 +30,16 @@ export default {
   ],
   appIndex: 'index.html',
   open: true,
-  historyApiFallback: true
+  historyApiFallback: true,
+  mimeTypes: {
+    '**/*.ts': 'js'
+  },
+  middleware: [
+    (context, next) => {
+      if (context.url.endsWith('.ts')) {
+        context.response.set('Content-Type', 'application/javascript');
+      }
+      return next();
+    }
+  ]
 };

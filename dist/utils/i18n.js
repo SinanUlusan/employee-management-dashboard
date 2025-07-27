@@ -38,7 +38,7 @@ export async function fetchTranslationsAsync() {
       return translations;
     }
 
-    const res = await fetch(`/locales/${lang}.json`);
+    const res = await fetch(`/src/locales/${lang}.json`);
     translations = await res.json();
     document.documentElement.lang = lang;
 
