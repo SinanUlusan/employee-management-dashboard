@@ -78,6 +78,8 @@ A modern, responsive web application for managing employee information built wit
 
    ```bash
    npm run dev
+   # or
+   npm start
    ```
 
 4. **Open your browser**
@@ -90,6 +92,15 @@ npm run build
 ```
 
 The built files will be available in the `dist/` directory.
+
+### Local Development Only
+
+This application is designed for local development. The development server provides:
+
+- Hot reloading for TypeScript files
+- ES modules support
+- TypeScript compilation on-the-fly
+- Local storage for data persistence
 
 ## 🧪 Testing
 
