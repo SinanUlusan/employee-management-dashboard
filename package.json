@@ -8,6 +8,7 @@
   "type": "module",
   "scripts": {
     "start": "wds --watch",
+    "dev": "wds --watch",
     "build": "rollup -c",
     "build:ts": "tsc",
     "lint": "npm run lint:eslint && npm run lint:ts",

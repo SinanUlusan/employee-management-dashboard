@@ -17,19 +17,9 @@
   ],
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-
   "headers": [
     {
-      "source": "/src/(.*)\\.ts$",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/javascript"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)\\.js$",
+      "source": "/(.*)\\.ts$",
       "headers": [
         {
           "key": "Content-Type",
