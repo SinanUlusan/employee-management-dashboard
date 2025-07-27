@@ -1,1 +1,0 @@
-import{R as e}from"./router-CPNxY1qj.js";new e(document.querySelector("#outlet")).setRoutes([{path:"/",component:"directory-page"},{path:"/new",component:"editor-page"},{path:"/edit/:id",component:"editor-page"}]);
