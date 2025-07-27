@@ -19,7 +19,7 @@
   "outputDirectory": "dist",
   "headers": [
     {
-      "source": "**/*.ts",
+      "source": "/(.*)\\.ts$",
       "headers": [
         {
           "key": "Content-Type",
@@ -28,7 +28,7 @@
       ]
     },
     {
-      "source": "**/*.js",
+      "source": "/(.*)\\.js$",
       "headers": [
         {
           "key": "Content-Type",
